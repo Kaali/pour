@@ -1,0 +1,132 @@
+pour is a web form validation library for the
+"Clojure":http://clojure.org programming language.
+
+The purpose of the library is to validate form fields to specified
+constraints/validators and also to convert incoming fields, which are strings,
+to valid data in the application domain.  In the future this library might be
+able to generate HTML or JavaScript code from form definitions.
+
+At the moment nothing binds this library to web, it can be used to validate
+any data in the form of a map.
+
+
+h2. Usage
+
+Forms are defined with a macro *defform* which defines a new named function
+which is used to validate a map of form data.  The following code is an
+example which might be used for validating login form fields (sans the actual
+login/password validation):
+
+<pre>
+(defform test-form
+  :login [[required "Login is required"]
+          [email-address "Login should be a valid email address"]]
+  :password [[required "Password is required"]
+             [(minimum-length 5) "Password should be at least 5 chars long"]])
+</pre>
+
+Running the code, a new function named *test-form* is defined.  The format of
+the macro is: the name of the resulting function, with any number of key value
+combinations where the key is the name of a field and the value is a vector of
+vectors, where the inner vectors defines a validator and an error message if
+that validation fails.  The validators must return either the input parameter
+or a conversion of it, which is then passed on to the next validator; *nil*
+designates an error.
+
+To validate input you just pass the map of data to that function:
+
+<pre>
+(test-form {:login "foo@example.com" :password "12345"})
+</pre>
+
+which in this case would return:
+
+<pre>
+{:errors {} :values {:login "foo@example.com", :password "12345"}}
+</pre>
+
+as you can see, the returned map is split in two sections *:errors* and
+*:values*.  The errors are listed in the *:errors* section, if any, and the
+converted values in the *:values* section.  To access these, you can use the
+keywords directly, but the library also defines two functions *errors* and
+*values* for fetching them (these provide a bit more abstraction if the
+returned map format changes in the future).
+
+The next example shows the error handling:
+
+<pre>
+(test-form {:login "foo" :password "12345"})
+</pre>
+
+which results in:
+
+<pre>
+{:errors {:login "Login should be a valid email address"}, :values {:login nil, :password "12345"}}
+</pre>
+
+as you can see, on error the *:errors* section is filled with data, and the
+value of the field with an error is set to *nil*.  The validators fail fast,
+so only the first error is reported.  To check for errors, you can use
+*errors?* function which returns a boolean.
+
+
+h2. Validators
+
+Validator functions are simply functions which takes a single argument, and
+returns that argument or a converted version of it on succesful validation,
+otherwise it returns *nil*.
+
+An example validator without conversion:
+
+<pre>
+(defn required [param] (if (pos? (count param)) param nil))
+</pre>
+
+this validator checks that the _param_ should have one or more elements in it.
+A check which could be used for non-empty strings or other sequences.  As you
+can see, when the check is succesful, it returns the original _param_ without
+touching it; otherwise *nil*.
+
+As said before, if there is a chain of validators, the returned value from the
+validators will be passed on to the next.  Kinda like with Clojure's *->*,
+except that validators only supports a single argument.
+
+To get a validator with configurable behavior, you can write a function which
+returns a function which will be the actual validator:
+
+<pre>
+(defn minimum-length [minlen]
+  (fn [param] (if (>= (count param) minlen) param nil)))
+</pre>
+
+You can use anonymous functions too, as shown in the following example; which
+also shows how the conversion works:
+
+<pre>
+(defn a-number [param]
+  (try (do (Integer/parseInt param))
+       (catch NumberFormatException _ nil)))
+
+(defform converter-example
+  :age [[required "Age is required"]
+        [a-number "Age must be a numeric value"]
+        [#(if (> % 13) % nil) "Must be older than 13 years"]])
+</pre>
+
+When checking the age, the starting value is though to be a string, for which
+*required* checks that the string is not empty, next *a-number* converts it to
+an integer and after that our anonymous function checks the age.
+
+
+h2. License
+
+Copyright (C) 2010 Väinö Järvelä
+Copyright (C) Rich Hickey (assert_args.clj)
+
+The use and distribution terms for this software are covered by the
+Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+see COPYING file.
+
+By using this software in any fashion, you are agreeing to be bound by the
+terms of this license.  You must not remove this notice, or any other, from
+this software.
