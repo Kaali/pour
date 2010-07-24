@@ -1,6 +1,10 @@
 (ns pour.core
   (:use [pour.assert-args :only [assert-args]]))
 
+(def stop ::stop)
+(defn stop-with-value [v] [stop v])
+(defn stop? [v] (= stop v))
+
 ;;; TODO: Refactor?
 (defn validate [param forms]
   (if (empty? forms)
@@ -8,9 +12,10 @@
     (let [f (first forms)
           err (first (next forms))
           v (f param)]
-      (if-not (nil? v)
-        (recur v (nnext forms))
-        [nil err]))))
+      (cond
+       (and (vector? v) (stop? (first v))) [(last v) nil]
+       (nil? v) [nil err]
+       :else (recur v (nnext forms))))))
 
 (defn- validator [forms]
   `(fn [param#] (validate param# ~forms)))
@@ -70,4 +75,10 @@
     :age [required "Age is required"
           a-number "Age must be a numeric value"
           #(if (> % 13) % nil) "Must be older than 13 years"])
+  )
+
+(comment
+  (defform optional-form
+    :age [(optional 999) ""
+          a-number "Age must be a numeric value"])
   )

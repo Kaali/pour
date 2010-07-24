@@ -1,4 +1,5 @@
-(ns pour.validators)
+(ns pour.validators
+  (:use [pour.core :only [stop-with-value]]))
 
 ;;; TODO: Fix for integers
 (defn required [param] (if (pos? (count param)) param nil))
@@ -18,3 +19,8 @@
 
 (defn email-address [param]
   (if (re-matches email-regex param) param nil))
+
+(defn optional [value-to-return]
+  "This validator short-circuits all validators after this and returns
+   the value given as the argument."
+  (fn [param] (if (nil? param) (stop-with-value value-to-return) param)))

@@ -117,6 +117,22 @@ When checking the age, the starting value is though to be a string, for which
 *required* checks that the string is not empty, next *a-number* converts it to
 an integer and after that our anonymous function checks the age.
 
+It's also possible to create short-circuiting validators, *optional* is a
+built-in example for that:
+
+<pre>
+(defform optional-example
+  :choice [(optional 0) ""
+           a-number "Choice must be a numeric value"])
+</pre>
+
+when *nil* is passed to *optional* it returns the argument, otherwise it
+passes the starting value to the next validator.  Notice that there is no
+error condition, so the error string can be empty.  There is a special
+function to use short-circuiting in the validators: *stop-with-value*, which
+takes a single argument, which is the value provided on short-circuit.  These
+short-circuit functions can be put anywhere in the validation chain.
+
 
 h2. License
 
