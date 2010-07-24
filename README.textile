@@ -60,7 +60,8 @@ The next example shows the error handling:
 which results in:
 
 <pre>
-{:errors {:login "Login should be a valid email address"}, :values {:login nil, :password "12345"}}
+{:errors {:login "Login should be a valid email address"},
+ :values {:login nil, :password "12345"}}
 </pre>
 
 as you can see, on error the *:errors* section is filled with data, and the
