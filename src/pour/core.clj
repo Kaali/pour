@@ -6,7 +6,7 @@
   (if (empty? forms)
     [param nil]
     (let [f (first forms)
-          err (next forms)
+          err (first (next forms))
           v (f param)]
       (if-not (nil? v)
         (recur v (nnext forms))
