@@ -49,11 +49,12 @@
    (every? vector? (every-other odd? forms)) "values must be vectors")
   (let [validators (form* forms)]
     `(defn ~name [params#]
-       (transform-results
-        (apply merge
-               (for [[k# v#] ~validators
-                     :let [input# (get params# k#)]]
-                 {k# ((k# ~validators) input#)}))))))
+       (let [vs# ~validators]
+         (transform-results
+          (apply merge
+                 (for [[k# v#] vs#
+                       :let [input# (get params# k#)]]
+                   {k# ((k# vs#) input#)})))))))
 
 
 (comment
