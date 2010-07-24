@@ -5,10 +5,11 @@
 (defn validate [param forms]
   (if (empty? forms)
     [param nil]
-    (let [[f err] (first forms)
+    (let [f (first forms)
+          err (next forms)
           v (f param)]
       (if-not (nil? v)
-        (recur v (next forms))
+        (recur v (nnext forms))
         [nil err]))))
 
 (defn- validator [forms]

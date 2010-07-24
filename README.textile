@@ -19,19 +19,18 @@ login/password validation):
 
 <pre>
 (defform test-form
-  :login [[required "Login is required"]
-          [email-address "Login should be a valid email address"]]
-  :password [[required "Password is required"]
-             [(minimum-length 5) "Password should be at least 5 chars long"]])
+  :login [required "Login is required"
+          email-address "Login should be a valid email address"]
+  :password [required "Password is required"
+             (minimum-length 5) "Password should be at least 5 chars long"])
 </pre>
 
 Running the code, a new function named *test-form* is defined.  The format of
 the macro is: the name of the resulting function, with any number of key value
-combinations where the key is the name of a field and the value is a vector of
-vectors, where the inner vectors defines a validator and an error message if
-that validation fails.  The validators must return either the input parameter
-or a conversion of it, which is then passed on to the next validator; *nil*
-designates an error.
+combinations where the key is the name of a field and the value is a vector
+that defines validator and error message pairs.  The validators must return
+either the input parameter or a conversion of it, which is then passed on to
+the next validator; *nil* designates an error.
 
 To validate input you just pass the map of data to that function:
 
@@ -108,9 +107,9 @@ also shows how the conversion works:
        (catch NumberFormatException _ nil)))
 
 (defform converter-example
-  :age [[required "Age is required"]
-        [a-number "Age must be a numeric value"]
-        [#(if (> % 13) % nil) "Must be older than 13 years"]])
+  :age [required "Age is required"
+        a-number "Age must be a numeric value"
+        #(if (> % 13) % nil) "Must be older than 13 years"])
 </pre>
 
 When checking the age, the starting value is though to be a string, for which
