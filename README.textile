@@ -18,6 +18,9 @@ example which might be used for validating login form fields (sans the actual
 login/password validation):
 
 <pre>
+(use ['pour.core :only ['defform]])
+(use 'pour.validators)
+
 (defform test-form
   :login [required "Login is required"
           email-address "Login should be a valid email address"]
