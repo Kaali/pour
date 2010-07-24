@@ -17,8 +17,8 @@
 
 (defn form* [forms]
   (apply merge
-         (map (fn [[k v]] {k (validator v)})
-              (apply array-map forms))))
+         (for [[k v] (apply array-map forms)]
+           {k (validator v)})))
 
 (defn- result-map [place results]
   (zipmap (keys results) (map place (vals results))))
