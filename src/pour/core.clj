@@ -58,15 +58,15 @@
 
 (comment
   (defform test-form
-    :login [[required "Login is required"]
-            [email-address "Login should be a valid email address"]]
-    :password [[required "Password is required"]
-               [(minimum-length 5) "Password should be longer than 4 chars"]])
+    :login [required "Login is required"
+            email-address "Login should be a valid email address"]
+    :password [required "Password is required"
+               (minimum-length 5) "Password should be longer than 4 chars"])
   )
 
 (comment
   (defform converter-example
-    :age [[required "Age is required"]
-          [a-number "Age must be a numeric value"]
-          [#(if (> % 13) % nil) "Must be older than 13 years"]])
+    :age [required "Age is required"
+          a-number "Age must be a numeric value"
+          #(if (> % 13) % nil) "Must be older than 13 years"])
   )
