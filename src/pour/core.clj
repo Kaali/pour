@@ -51,7 +51,9 @@
     `(defn ~name [params#]
        (transform-results
         (apply merge
-               (map (fn [[k# v#]] {k# ((k# ~validators) v#)}) params#))))))
+               (for [[k# v#] ~validators
+                     :let [input# (get params# k#)]]
+                 {k# ((k# ~validators) input#)}))))))
 
 
 (comment
