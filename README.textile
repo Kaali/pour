@@ -189,7 +189,15 @@ Tests that the value length is not larger than _maxlen_.
 h3. a-number
 
 Converts the value to a number from a String, or passes a number as is.  If
-the value cannot be converted to a number, it raises an error.
+the value cannot be converted to a number, it returns *nil*.
+
+h3. an-integer
+
+Same as *a-number* but only works on Integers.
+
+h3. a-double
+
+Same as *a-number* but converts all numbers to a Double.
 
 h3. email-address
 

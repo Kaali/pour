@@ -34,7 +34,22 @@
   (validator-test a-number "123.5" 123.5)
   (validator-test a-number 123)
   (validator-test a-number 123.5)
-  (validator-test a-number "invalid number" nil))
+  (validator-test a-number "invalid number" nil)
+  (validator-test a-number nil))
+
+(deftest an-integer-validator
+  (validator-test an-integer 123 123)
+  (validator-test an-integer 123.5 nil)
+  (validator-test an-integer "123" 123)
+  (validator-test an-integer "123.5" nil)
+  (validator-test an-integer nil))
+
+(deftest a-double-validator
+  (validator-test a-double 123.0 123.0)
+  (validator-test a-double 123.5 123.5)
+  (validator-test a-double "123" 123.0)
+  (validator-test a-double "123.5" 123.5)
+  (validator-test a-double nil))
 
 ;;; Just a basic test of validity, the regex used has been tested more
 ;;; thoroughly by the original creators.
