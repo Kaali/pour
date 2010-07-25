@@ -10,9 +10,14 @@
 (defn maximum-length [maxlen]
   (fn [param] (if (<= (count param) maxlen) param nil)))
 
-(defn a-number [param]
+(defmulti a-number type)
+(defmethod a-number Number [param] param)
+(defmethod a-number String
+  [param]
   (try (do (Integer/parseInt param))
-       (catch NumberFormatException _ nil)))
+       (catch NumberFormatException _
+         (try (do (Double/parseDouble param))
+              (catch NumberFormatException _ nil)))))
 
 ; This regex is from James Watts and Francisco Jose Martin Moreno
 (def email-regex #"^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$")
