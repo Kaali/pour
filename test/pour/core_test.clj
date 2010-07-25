@@ -75,5 +75,5 @@
 (deftest short-circuit-fns
   (let [v "value"
         s (stop-with-value v)]
-    (is (stop? (first s)))
-    (is (= v (last s)))))
+    (is (stop? s))
+    (is (= v (stop-value s)))))

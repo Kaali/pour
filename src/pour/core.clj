@@ -3,7 +3,8 @@
 
 (def stop ::stop)
 (defn stop-with-value [v] [stop v])
-(defn stop? [v] (= stop v))
+(defn stop? [v] (= stop (first v)))
+(defn stop-value [v] (last v))
 
 ;;; TODO: Refactor?
 (defn validate [param forms]
@@ -13,7 +14,7 @@
           err (first (next forms))
           v (f param)]
       (cond
-       (and (vector? v) (stop? (first v))) [(last v) nil]
+       (and (vector? v) (stop? v)) [(stop-value v) nil]
        (nil? v) [nil err]
        :else (recur v (nnext forms))))))
 
