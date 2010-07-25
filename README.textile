@@ -72,6 +72,9 @@ value of the field with an error is set to *nil*.  The validators fail fast,
 so only the first error is reported.  To check for errors, you can use
 *errors?* function which returns a boolean.
 
+Even if you don't provide all the fields in your input map, all the fields
+defined in the form will be validated with nil as the value for missing keys.
+
 
 h2. Validators
 
