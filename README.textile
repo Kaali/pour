@@ -166,6 +166,41 @@ takes a single argument, which is the value provided on short-circuit.  These
 short-circuit functions can be put anywhere in the validation chain.
 
 
+h2. Built-in Validators
+
+In *pour.validators* namespace, there are some built-in validators.  Some of
+them we already used in the previous examples, but here is a list of current
+validators:
+
+h3. required
+
+Tests that the value is defined and is not empty.  It's designed mainly for
+Strings.
+
+h3. minimum-length [minlen]
+
+Tests that the value length is not smaller than _minlen_.  It's actually a
+function which returns the actual validator when called.
+
+h3. maximum-length [maxlen]
+
+Tests that the value length is not larger than _maxlen_.
+
+h3. a-number
+
+Converts the value to a number from a String, or passes a number as is.  If
+the value cannot be converted to a number, it raises an error.
+
+h3. email-address
+
+Tests that the value is a valid email address.
+
+h3. optional [value-to-return]
+
+If the value is nil, then the validation chain short-circuits and returns
+_value-to-return_.  Otherwise it passes on the original value.
+
+
 h2. License
 
 Copyright (C) 2010 Väinö Järvelä
