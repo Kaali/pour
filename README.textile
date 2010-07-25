@@ -201,6 +201,12 @@ If the value is nil, then the validation chain short-circuits and returns
 _value-to-return_.  Otherwise it passes on the original value.
 
 
+h2. Contact
+
+To contact me, send email to my first name without umlauts _vaino_ at
+complexusage.net
+
+
 h2. License
 
 Copyright (C) 2010 Väinö Järvelä
