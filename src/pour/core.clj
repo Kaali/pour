@@ -6,6 +6,31 @@
 (defn stop? [v] (= stop (first v)))
 (defn stop-value [v] (last v))
 
+(defn pred-to-validator
+  "Converts a simple predicate to a validator"
+  [pred]
+  (fn [param] (when (pred param) param)))
+
+(defmacro pred-to-validator->
+  "-> threading version of pred-to-validator"
+  [& preds]
+  `(fn [param#] (when (-> param# ~@preds) param#)))
+
+(defmacro pred-to-validator->>
+  "->> threading version of pred-to-validator"
+  [& preds]
+  `(fn [param#] (when (->> param# ~@preds) param#)))
+
+(defmacro pred-to-validator-do->
+  "-> threading version of pred-to-validator which returns the chain result"
+  [& preds]
+  `(fn [param#] (when-let [v# (-> param# ~@preds)] v#)))
+
+(defmacro pred-to-validator-do->>
+  "->> threading version of pred-to-validator which returns the chain result"
+  [& preds]
+  `(fn [param#] (when-let [v# (->> param# ~@preds)] v#)))
+
 ;;; TODO: Refactor?
 (defn validate [param forms]
   (if (empty? forms)

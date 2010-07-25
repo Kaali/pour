@@ -77,3 +77,18 @@
         s (stop-with-value v)]
     (is (stop? s))
     (is (= v (stop-value s)))))
+
+(deftest pred-to-validator-test
+  (let [v (pred-to-validator pos?)]
+    (is (= 1 (v 1)))
+    (is (nil? (v 0))))
+  (let [v (pred-to-validator-> (> 10))]
+    (is (= 11 (v 11)))
+    (is (nil? (v 10))))
+  (let [v (pred-to-validator->> (> 10))]
+    (is (= 9 (v 9)))
+    (is (nil? (v 11))))
+  (let [v (pred-to-validator-do->> (map inc))]
+    (is (= [2 3 4] (v [1 2 3]))))
+  (let [v (pred-to-validator-do-> (+ 10))]
+    (is (= 20 (v 10)))))

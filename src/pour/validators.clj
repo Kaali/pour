@@ -1,14 +1,15 @@
 (ns pour.validators
-  (:use [pour.core :only [stop-with-value]]))
+  (:use [pour.core
+         :only [stop-with-value pred-to-validator->> pred-to-validator->]]))
 
 ;;; TODO: Fix for integers
-(defn required [param] (if (pos? (count param)) param nil))
+(def required (pred-to-validator->> (count) (pos?)))
 
 (defn minimum-length [minlen]
-  (fn [param] (if (>= (count param) minlen) param nil)))
+  (pred-to-validator-> (count) (>= minlen)))
 
 (defn maximum-length [maxlen]
-  (fn [param] (if (<= (count param) maxlen) param nil)))
+  (pred-to-validator-> (count) (<= maxlen)))
 
 (defmulti a-number type)
 (defmethod a-number Number [param] param)
@@ -22,8 +23,7 @@
 ; This regex is from James Watts and Francisco Jose Martin Moreno
 (def email-regex #"^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$")
 
-(defn email-address [param]
-  (if (re-matches email-regex param) param nil))
+(def email-address (pred-to-validator->> (re-matches email-regex)))
 
 (defn optional [value-to-return]
   "This validator short-circuits all validators after this and returns

@@ -120,6 +120,32 @@ When checking the age, the starting value is though to be a string, for which
 *required* checks that the string is not empty, next *a-number* converts it to
 an integer and after that our anonymous function checks the age.
 
+There is a helper function for creating validators from simple predicates
+called *pred-to-validator*:
+
+<pre>
+(def over-13 (pred-to-validator #(> % 13)))
+
+(defform converter-example
+  :age [required "Age is required"
+        a-number "Age must be a numeric value"
+        over-13 "Must be older than 13 years"])
+</pre>
+
+or it's two variants:
+
+<pre>
+(def over-13 (pred-to-validator-> (> 13)))
+
+(def over-13 (pred-to-validator->> (< 13)))
+</pre>
+
+which works just like Clojures built-in *->* and *->>* where the first value
+of the chain is the value to be validated, only difference is that the
+original value is returned when the chain return other than nil.  There are
+two variants of these if you wish to return the chain result:
+*pred-to-validator-do->* and *pred-to-validator-do->>*.
+
 It's also possible to create short-circuiting validators, *optional* is a
 built-in example for that:
 
