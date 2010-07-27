@@ -4,7 +4,7 @@
 (def stop ::stop)
 (defn stop-with-value [v] [stop v])
 (defn stop? [v] (= stop (first v)))
-(defn stop-value [v] (last v))
+(defn stop-value [v] (second v))
 
 (defn pred-to-validator
   "Converts a simple predicate to a validator"
@@ -58,7 +58,7 @@
   (result-map first results))
 
 (defn error-map [results]
-  (result-map last (remove (fn [[k v]] (nil? (last v))) results)))
+  (result-map second (remove (fn [[k v]] (nil? (second v))) results)))
 
 (def errors :errors)
 (def values :values)
@@ -68,7 +68,7 @@
   (assoc {values (value-map results)} errors (error-map results)))
 
 (defn- every-other [f coll]
-  (keep-indexed (fn [i v] (if (f i) v nil)) coll))
+  (keep-indexed (fn [i v] (if (f i) v)) coll))
 
 (defmacro fields
   "Return a vector of fields defined in a form.
