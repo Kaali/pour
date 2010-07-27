@@ -92,3 +92,10 @@
     (is (= [2 3 4] (v [1 2 3]))))
   (let [v (pred-to-validator-do-> (+ 10))]
     (is (= 20 (v 10)))))
+
+(defform test-form-4
+  :title [required "Title is required"]
+  :occupation [required "Occupation is required"])
+
+(deftest fields-test
+  (is (= (set [:title :occupation]) (set (fields test-form-4)))))

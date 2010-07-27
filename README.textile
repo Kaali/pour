@@ -74,6 +74,8 @@ so only the first error is reported.  To check for errors, you can use
 
 Even if you don't provide all the fields in your input map, all the fields
 defined in the form will be validated with nil as the value for missing keys.
+To get a list of fields in the form use *fields* function for it; but note
+that the fields returned are not in any order.
 
 
 h2. Validators

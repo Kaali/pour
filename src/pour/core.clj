@@ -70,6 +70,13 @@
 (defn- every-other [f coll]
   (keep-indexed (fn [i v] (if (f i) v nil)) coll))
 
+(defmacro fields
+  "Return a vector of fields defined in a form.
+
+  Field order is not retained"
+  [form]
+  `(:fields (meta (var ~form))))
+
 (defmacro defform
   "Define a web form for validation"
   [name & forms]
@@ -78,8 +85,10 @@
    (even? (count forms)) "even count for forms vector"
    (every? keyword? (every-other even? forms)) "keys must be keywords"
    (every? vector? (every-other odd? forms)) "values must be vectors")
-  (let [validators (form* forms)]
-    `(defn ~name [params#]
+  (let [validators (form* forms)
+        fields (vec (keys validators))]
+    `(defn ~(with-meta name (assoc (meta name) :fields fields))
+       [params#]
        (let [vs# ~validators]
          (transform-results
           (apply merge
