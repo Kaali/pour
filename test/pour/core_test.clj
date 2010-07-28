@@ -98,4 +98,4 @@
   :occupation [required "Occupation is required"])
 
 (deftest fields-test
-  (is (= (set [:title :occupation]) (set (fields test-form-4)))))
+  (is (= (set [:title :occupation]) (fields test-form-4))))

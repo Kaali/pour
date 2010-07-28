@@ -86,7 +86,7 @@
    (every? keyword? (every-other even? forms)) "keys must be keywords"
    (every? vector? (every-other odd? forms)) "values must be vectors")
   (let [validators (form* forms)
-        fields (vec (keys validators))]
+        fields (set (keys validators))]
     `(defn ~(with-meta name (assoc (meta name) :fields fields))
        [params#]
        (let [vs# ~validators]
