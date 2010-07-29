@@ -61,19 +61,6 @@
        (nil? v) [nil err]
        :else (recur v (nnext forms))))))
 
-(defn- validator
-  "Returns a quoted anonymous validator function for validator forms"
-  [forms]
-  `(fn [param#] (validate param# ~forms)))
-
-(defn form*
-  "Convert validator forms to a map of fields and validator functions,
-  where the validator function runs through the whole chain."
-  [forms]
-  (apply merge
-         (for [[k v] (apply array-map forms)]
-           {k (validator v)})))
-
 (defn- value-map
   "Transform defform result map to just contain the values"
   [results]
@@ -100,24 +87,47 @@
     (if (empty? coll) acc
         (recur (nnext coll) (conj acc (first coll))))))
 
+(defn- validator
+  "Returns a quoted anonymous validator function for validator forms"
+  [forms]
+  `(fn [param#] (validate param# ~forms)))
+
+(defn transform-validator-forms
+  "Convert validator forms to a map of fields and validator functions,
+  where the validator function runs through the whole chain."
+  [forms]
+  (apply merge
+         (for [[k v] (apply array-map forms)]
+           {k (validator v)})))
+
+(defn form*
+  "Checks params against computed validators.
+
+  Computed validators means that they have been run through
+  transform-validator-forms function to convert from vectors to proper maps."
+  [params validators]
+  (transform-results
+   (apply merge
+          (for [[k v] validators
+                :let [input (get params k)]]
+            {k ((k validators) input)}))))
+
 (defmacro defform
-  "Define a web form for validation"
+  "Define a web form for validation
+
+  It's a macro which allows for the special syntax, and as a useful feature
+  it precomputes the validator forms transformation."
   [name & forms]
   (assert-args
    defform
    (even? (count forms)) "even count for forms vector"
    (every? keyword? (every-other forms)) "keys must be keywords"
    (every? vector? (every-other (next forms))) "values must be vectors")
-  (let [validators (form* forms)
+  (let [validators (transform-validator-forms forms)
         fields (set (keys validators))]
     `(defn ~(with-meta name (assoc (meta name) :fields fields))
        [params#]
-       (let [vs# ~validators]
-         (transform-results
-          (apply merge
-                 (for [[k# v#] vs#
-                       :let [input# (get params# k#)]]
-                   {k# ((k# vs#) input#)})))))))
+       (form* params# ~validators))))
 
 
 (comment
